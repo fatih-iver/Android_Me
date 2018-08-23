@@ -16,6 +16,7 @@
 
 package com.example.android.android_me.ui;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +27,9 @@ import com.example.android.android_me.data.AndroidImageAssets;
 // This activity will display a custom Android image composed of three body parts: head, body, and legs
 public class AndroidMeActivity extends AppCompatActivity {
 
+    private int headIndex;
+    private int bodyIndex;
+    private int legIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +39,26 @@ public class AndroidMeActivity extends AppCompatActivity {
         // Only create new fragments when there is no previously saved state
         if(savedInstanceState == null) {
 
-            // TODO (5) Retrieve list index values that were sent through an intent; use them to display the desired Android-Me body part image
-                // Use setListindex(int index) to set the list index for all BodyPartFragments
+            Intent intent = getIntent();
+
+            if(intent != null) {
+                Bundle bundle = intent.getExtras();
+
+                if(bundle != null) {
+
+                    headIndex = bundle.getInt("headIndex");
+                    bodyIndex = bundle.getInt("bodyIndex");
+                    legIndex = bundle.getInt("legIndex");
+
+                }
+            }
 
             // Create a new head BodyPartFragment
             BodyPartFragment headFragment = new BodyPartFragment();
 
             // Set the list of image id's for the head fragment and set the position to the second image in the list
             headFragment.setImageIds(AndroidImageAssets.getHeads());
-            headFragment.setListIndex(1);
+            headFragment.setListIndex(headIndex);
 
             // Add the fragment to its container using a FragmentManager and a Transaction
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -56,12 +71,14 @@ public class AndroidMeActivity extends AppCompatActivity {
 
             BodyPartFragment bodyFragment = new BodyPartFragment();
             bodyFragment.setImageIds(AndroidImageAssets.getBodies());
+            bodyFragment.setListIndex(bodyIndex);
             fragmentManager.beginTransaction()
                     .add(R.id.body_container, bodyFragment)
                     .commit();
 
             BodyPartFragment legFragment = new BodyPartFragment();
             legFragment.setImageIds(AndroidImageAssets.getLegs());
+            legFragment.setListIndex(legIndex);
             fragmentManager.beginTransaction()
                     .add(R.id.leg_container, legFragment)
                     .commit();
